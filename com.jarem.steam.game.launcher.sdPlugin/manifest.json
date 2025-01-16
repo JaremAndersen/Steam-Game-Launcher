@@ -1,0 +1,43 @@
+{
+	"Name": "Steam Game Launcher",
+	"Version": "0.1.0.0",
+	"Author": "Jarem",
+	"Actions": [
+		{
+			"Name": "Launch game",
+			"UUID": "com.jarem.steam.game.launcher.shortcut",
+			"Icon": "imgs/actions/shortcut/steam",
+			"Tooltip": "Launches a game",
+			"PropertyInspectorPath": "ui/game-shortcut.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/shortcut/steam",
+					"TitleAlignment": "middle"
+				}
+			]
+		}
+	],
+	"Category": "Steam Game Launcher",
+	"CategoryIcon": "imgs/plugin/steam",
+	"CodePath": "bin/plugin.js",
+	"Description": "Create shortcuts to launch your favorite games",
+	"Icon": "imgs/plugin/marketplace",
+	"SDKVersion": 2,
+	"Software": {
+		"MinimumVersion": "6.4"
+	},
+	"OS": [
+		{
+			"Platform": "windows",
+			"MinimumVersion": "10"
+		}
+	],
+	"Nodejs": {
+		"Version": "20",
+		"Debug": "--inspect=127.0.0.1:9222"
+	},
+	"UUID": "com.jarem.steam.game.launcher"
+}
