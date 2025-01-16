@@ -13,12 +13,18 @@ import fs from "node:fs";
 import path from "node:path";
 
 type GameShortcutSettings = {
-	gameList?: string[];
 	selectedGame?: string;
+	iconPath?: string;
+	test: number;
+};
+
+type GameShortcutGlobalSettings = {
+	gameList?: Game[];
 };
 
 type DataSourcePayload = {
 	event: string;
+	isRefresh?: boolean;
 };
 
 type Game = {
@@ -28,8 +34,10 @@ type Game = {
 
 @action({ UUID: "com.jarem.steam.game.launcher.shortcut" })
 export class GameShortcut extends SingletonAction<GameShortcutSettings> {
-	override async onWillAppear(ev: WillAppearEvent<GameShortcutSettings>): Promise<void> {
-		streamDeck.logger.info("GameShortcut willAppear");
+	override onWillAppear(ev: WillAppearEvent<GameShortcutSettings>): void | Promise<void> {
+		if (ev.payload.settings.iconPath) {
+			ev.action.setImage(ev.payload.settings.iconPath);
+		}
 	}
 
 	override async onKeyDown(ev: KeyDownEvent<GameShortcutSettings>): Promise<void> {
@@ -53,31 +61,40 @@ export class GameShortcut extends SingletonAction<GameShortcutSettings> {
 		const game = ev.payload.settings.selectedGame;
 		if (game) {
 			const path = this.getImagePath(game);
+			ev.action.setSettings({ ...ev.payload.settings, iconPath: path });
 			ev.action.setImage(path);
 		}
 	}
 
-	override onSendToPlugin(ev: SendToPluginEvent<DataSourcePayload, GameShortcutSettings>): void | Promise<void> {
+	override async onSendToPlugin(ev: SendToPluginEvent<DataSourcePayload, GameShortcutSettings>): Promise<void> {
 		if (ev.payload?.event === "getGames") {
-			const games = this.getGames();
+			const settings = await streamDeck.settings.getGlobalSettings<GameShortcutGlobalSettings>();
 
-			ev.action.setSettings({ gameList: games });
-
-			const items = games.map((game) => {
-				return {
-					label: game.gameName,
-					value: game.appId,
-				};
-			});
-
-			streamDeck.ui.current?.sendToPropertyInspector({
-				event: "getGames",
-				items: items,
-			});
+			if (settings.gameList && !ev.payload.isRefresh) {
+				this.buildGameSelect(settings.gameList);
+			} else {
+				const games = this.getGames();
+				streamDeck.settings.setGlobalSettings({ ...settings, gameList: games });
+				this.buildGameSelect(games);
+			}
 		}
 	}
 
-	private getGames() {
+	private buildGameSelect(games: Game[]): void {
+		const items = games.map((game) => {
+			return {
+				label: game.gameName,
+				value: game.appId,
+			};
+		});
+
+		streamDeck.ui.current?.sendToPropertyInspector({
+			event: "getGames",
+			items: items,
+		});
+	}
+
+	private getGames(): Game[] {
 		const libraries = this.getLibraryFolders();
 
 		const games = libraries.flatMap((folderPath) => {
