@@ -81,20 +81,25 @@ export class GameShortcut extends SingletonAction<GameShortcutSettings> {
 		const libraries = this.getLibraryFolders();
 
 		const games = libraries.flatMap((folderPath) => {
-			const files = fs.readdirSync(folderPath).filter((file) => {
-				return file.startsWith("appmanifest");
-			});
+			try {
+				const files = fs.readdirSync(folderPath).filter((file) => {
+					return file.startsWith("appmanifest");
+				});
 
-			return files.reduce<Game[]>((acc, file) => {
-				const filePath = path.join(folderPath, file);
-				const fileContent = fs.readFileSync(filePath, "utf-8");
-				const gameName = fileContent.match(/"name"\s*"(.*?)"/)?.[1];
-				const appId = fileContent.match(/"appid"\s*"(.*?)"/)?.[1];
-				if (gameName && appId) {
-					acc.push({ gameName, appId });
-				}
-				return acc;
-			}, []);
+				return files.reduce<Game[]>((acc, file) => {
+					const filePath = path.join(folderPath, file);
+					const fileContent = fs.readFileSync(filePath, "utf-8");
+					const gameName = fileContent.match(/"name"\s*"(.*?)"/)?.[1];
+					const appId = fileContent.match(/"appid"\s*"(.*?)"/)?.[1];
+					if (gameName && appId) {
+						acc.push({ gameName, appId });
+					}
+					return acc;
+				}, []);
+			} catch (e) {
+				streamDeck.logger.error(`Error reading folder ${folderPath}`);
+				return [];
+			}
 		});
 
 		return games.sort((a, b) => {
