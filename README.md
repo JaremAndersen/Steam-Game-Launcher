@@ -14,8 +14,8 @@ Welcome to the **Steam Game Launcher**! This plugin allows you to seamlessly cre
 
 1. Download the latest release from the [Releases](https://github.com/JaremAndersen/Steam-Game-Launcher/releases) page.
 2. Open the Elgato Stream Deck application.
-3. Drag and drop the downloaded `.streamDeckPlugin` file onto the application window to install.
-4. Restart the Stream Deck application if required.
+3. Open the downloaded `.streamDeckPlugin`.
+4. Plugin should install automatically.
 
 ## Usage
 
