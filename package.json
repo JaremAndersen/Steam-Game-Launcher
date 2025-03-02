@@ -2,6 +2,8 @@
     "scripts": {
         "build": "rollup -c",
         "watch": "rollup -c -w --watch.onEnd=\"streamdeck restart com.jarem.steam.game.launcher\"",
+        "link" : "streamdeck link com.jarem.steam.game.launcher.sdPlugin",
+        "pack" : "streamdeck pack com.jarem.steam.game.launcher.sdPlugin -f",
         "lint:check": "prettier --check .",
         "lint:fix": "prettier --write ."
     },

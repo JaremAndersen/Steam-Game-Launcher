@@ -139,7 +139,7 @@ export class GameShortcut extends SingletonAction<GameShortcutSettings> {
 	}
 
 	private getImagePath(appId: string): string {
-		const folder = "C:\\Program Files (x86)\\Steam\\appcache\\librarycache";
-		return path.join(folder, `${appId}_logo.png`);
+		const folder = `C:\\Program Files (x86)\\Steam\\appcache\\librarycache\\${appId}\\`;
+		return path.join(folder, `logo.png`);
 	}
 }
